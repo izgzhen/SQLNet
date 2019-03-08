@@ -142,7 +142,7 @@ def epoch_train(model, optimizer, batch_size, sql_data, table_data, pred_entry):
         score = model.forward(q_seq, col_seq, col_num, pred_entry,
                 gt_where=gt_where_seq, gt_cond=gt_cond_seq, gt_sel=gt_sel_seq)
         loss = model.loss(score, ans_seq, pred_entry, gt_where_seq)
-        cum_loss += loss.data.cpu().numpy()[0]*(ed - st)
+        cum_loss += loss.data.cpu().numpy()*(ed - st)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
