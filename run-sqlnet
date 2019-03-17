@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+from msbase.utils import write_pretty_json, datetime_str
+from msbase.subprocess_ import try_call_std
+import time
+
+stat = {}
+
+start_secs = time.time()
+command = ["python2", "train.py", "--ca"]
+output = try_call_std(command)
+seconds = time.time() - start_secs
+
+stat["train"] = { "seconds": seconds, "output": output, "command": command }
+
+start_secs = time.time()
+command = ["python2", "test.py", "--ca"]
+output = try_call_std(command)
+seconds = time.time() - start_secs
+
+stat["test"] = { "seconds": seconds, "output": output, "command": command }
+
+write_pretty_json(stat, path="run-sqlnet-%s.json" % datetime_str())
