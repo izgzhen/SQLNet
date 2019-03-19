@@ -1,23 +1,13 @@
 #!/usr/bin/env python3
 
-from msbase.utils import write_pretty_json, datetime_str
-from msbase.subprocess_ import try_call_std
-import time
+from msbase.lab import Step, AbstractLab
 
-stat = {}
+train_step = Step("train", command = ["python2", "train.py", "--ca", "--train_emb"])
+test_step  = Step("test",  command = ["python2", "test.py", "--ca", "--train_emb"])
 
-start_secs = time.time()
-command = ["python2", "train.py", "--ca"]
-output = try_call_std(command)
-seconds = time.time() - start_secs
+class Lab(AbstractLab):
+    def digest_output(self, name, output):
+        return {}
 
-stat["train"] = { "seconds": seconds, "output": output, "command": command }
-
-start_secs = time.time()
-command = ["python2", "test.py", "--ca"]
-output = try_call_std(command)
-seconds = time.time() - start_secs
-
-stat["test"] = { "seconds": seconds, "output": output, "command": command }
-
-write_pretty_json(stat, path="run-sqlnet-%s.json" % datetime_str())
+lab = Lab("sqlnet", steps=[train_step, test_step])
+lab.run()
