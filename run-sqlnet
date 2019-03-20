@@ -17,12 +17,18 @@ class Lab(AbstractLab):
         stdout, stderr, code = output
         ret = { key : "N/A" for key in self.digest_column_names() }
         try:
+            breakdowns = re.compile("breakdown on \(agg, sel, where\): \[(\d+\.\d+) (\d+\.\d+) (\d+\.\d+).+\]").findall(stdout)
             dev_acc_qm = re.compile("Dev acc_qm: (\d+\.\d+)").findall(stdout)[-1]
             dev_acc_ex = re.compile("Dev execution acc: (\d+\.\d+)").findall(stdout)[-1]
+            dev_acc_agg, dev_acc_sel, dev_acc_where = breakdowns[-2]
             test_acc_qm = re.compile("Test acc_qm: (\d+\.\d+)").findall(stdout)[-1]
             test_acc_ex = re.compile("Test execution acc: (\d+\.\d+)").findall(stdout)[-1]
+            test_acc_agg, test_acc_sel, test_acc_where = breakdowns[-1]
             ret[names["qm"]] = "%.3f (%.3f)" % (float(test_acc_qm), float(dev_acc_qm))
             ret[names["ex"]] = "%.3f (%.3f)" % (float(test_acc_ex), float(dev_acc_ex))
+            ret[names["agg"]] = "%.3f (%.3f)" % (float(test_acc_agg), float(dev_acc_agg))
+            ret[names["sel"]] = "%.3f (%.3f)" % (float(test_acc_sel), float(dev_acc_sel))
+            ret[names["where"]] = "%.3f (%.3f)" % (float(test_acc_where), float(dev_acc_where))
         except Exception as e:
             print(e)
         mode = []
