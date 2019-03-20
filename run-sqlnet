@@ -36,6 +36,8 @@ class Lab(AbstractLab):
             mode.append('TE')
         if "--ca" in command:
             mode.append('CA')
+        if "--baseline" in command:
+            mode.append("baseline")
         ret["Mode"] = ','.join(mode)
         return ret
 
