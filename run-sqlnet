@@ -12,8 +12,8 @@ names = { kind : "$Acc_{%s}$" % kind for kind in kinds }
 
 class Lab(AbstractLab):
     def digest_column_names(self):
-        return list(names.values())
-    def digest_output(self, name, output):
+        return ["Mode"] + list(names.values())
+    def digest_output(self, name, output, command):
         stdout, stderr, code = output
         ret = { key : "N/A" for key in self.digest_column_names() }
         try:
@@ -25,6 +25,12 @@ class Lab(AbstractLab):
             ret[names["ex"]] = "%.3f (%.3f)" % (float(test_acc_ex), float(dev_acc_ex))
         except Exception as e:
             print(e)
+        mode = []
+        if "--train_emb" in command:
+            mode.append('TE')
+        if "--ca" in command:
+            mode.append('CA')
+        ret["Mode"] = ','.join(mode)
         return ret
 
 lab = Lab("sqlnet", steps=[train_step, test_step])
